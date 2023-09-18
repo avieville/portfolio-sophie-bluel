@@ -1,0 +1,70 @@
+.login {
+    height: auto;
+}
+
+.login h2 {
+    margin-top: 150px;
+    margin-bottom: 37px;
+    text-align: center;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login form label {
+    font-family: Work Sans;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.login form input {
+    width: 379px;
+    height: 51px;
+    border: none;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+.login form input[type="email"] {
+    margin-bottom: 30px;
+}
+
+.login form input[type="password"] {
+    margin-bottom: 37px;
+}
+
+.login__form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.login button {
+    width: 179px;
+    height: 36px;
+    background-color: #1d6154;
+    color: white;
+    font-size: 14px;
+    font-family: Syne;
+    font-weight: 700;
+    border-radius: 60px;
+    margin-bottom: 28px;
+    cursor: pointer;
+}
+
+.login a {
+    color: rgba(61, 61, 61, 1);
+    font-family: Work Sans;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 355px;
+    display: block;
+    text-align: center;
+}
+
+.login p {
+    margin-bottom: 14px;
+    color: #b1663c;
+}
