@@ -1,0 +1,181 @@
+.modal {
+    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    transition: 0.2s;
+}
+
+.modal.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 630px;
+    margin: auto;
+    position: relative;
+    border-radius: 5px;
+    padding: 60px 105px 55px 105px;
+    background-color: white;
+}
+
+
+.modal__closing-cross {
+    position: absolute;
+    top: 26px;
+    right: 30px;
+    cursor: pointer;
+}
+
+.modal__arrow-left {
+    position: absolute;
+    top: 26px;
+    left: 30px;
+    cursor: pointer;
+}
+
+.modal__title {
+    font-family: "Work Sans";
+    font-weight: 400;
+    font-size: 26px;
+    text-align: center;
+    margin-bottom: 46px;
+    color: black;
+    line-height: 30.5px;
+}
+
+.modal__card {
+    position: relative;
+    width: 76.61px;
+    height: 102.57px;
+}
+
+.modal__card-image {
+    width: 100%;
+    height: 100%;
+}
+
+.modal__card-bin {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+
+.modal__cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 29px 9px;
+    padding-bottom: 67.3px;
+    border-bottom: 1px solid rgba(179, 179, 179, 1);
+}
+
+.modal__button {
+
+    background-color: rgba(29, 97, 84, 1);
+    color: white;
+    font-family: Syne;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16.8px;
+    padding: 10px 49px 9px 49px;
+    margin-top: 48px;
+    width: 237px;
+    border-radius: 60px;
+    text-wrap: nowrap;
+    cursor: pointer;
+}
+
+
+/*form*/
+.modal__form-photo-area {
+    background-color: rgba(232, 241, 246, 1);
+    width: 420px;
+    height: 169px;
+    display: flex;
+    justify-content: center;
+}
+
+.modal__form-file-group{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px
+}
+
+.modal__form-landscape {
+    height: 76px;
+    width: 76px;
+    margin-top: 13px;
+}
+
+.modal__form-file-input {
+    display: none;
+}
+
+.modal__form-file-input-label {
+    background-color: rgba(203, 214, 220, 1);
+    font-weight: 500;
+    font-size: 14px;
+    font-family: "Work sans";
+    color: rgba(48, 102, 133, 1);
+    padding: 10px 33px;
+    border-radius: 60px;
+}
+
+.modal__form p {
+    font-weight: 400;
+    font-size: 10px;
+    font-family: 'Work sans';
+}
+
+.modal__form-photo-area {
+    margin-bottom: 30px;
+}
+
+.modal__form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal__form-group label {
+    margin-bottom: 10px;
+    font-family: 'Work sans';
+    font-weight: 500;
+    font-size: 14px;
+
+}
+
+.modal__form-group input, .modal__form-group select {
+    height: 51px;
+    border: none;
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.09);
+    font-family: 'Work sans';
+    font-weight: 400;
+    font-size: 14px;
+    color: rgba(68, 68, 68, 1);
+}
+
+
+
+.form-group-title{
+margin-bottom: 21px;
+}
+
+.form-group-categorie{
+    padding-bottom: 47px;
+    border-bottom: 1px solid rgba(179, 179, 179, 1);
+}
+
+.form__preview{
+    height: 100%;
+    max-width: 80%;
+    
+}
