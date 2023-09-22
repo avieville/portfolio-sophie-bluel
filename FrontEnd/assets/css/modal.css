@@ -16,6 +16,7 @@
 }
 
 .modal__content {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,7 +24,7 @@
     margin: auto;
     position: relative;
     border-radius: 5px;
-    padding: 60px 105px 55px 105px;
+    padding: 60px 105px 45px 105px;
     background-color: white;
 }
 
@@ -86,11 +87,12 @@
     font-size: 14px;
     line-height: 16.8px;
     padding: 10px 49px 9px 49px;
-    margin-top: 48px;
+    margin-top: 38px;
     width: 237px;
     border-radius: 60px;
     text-wrap: nowrap;
     cursor: pointer;
+   
 }
 
 

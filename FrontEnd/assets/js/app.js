@@ -1,3 +1,6 @@
+import { showModal } from "./modal.js";
+import { deleteEditBar, displayEditBar } from "./edit-bar.js";
+
 async function getProjects() {
   const response = await fetch("http://localhost:5678/api/works");
   const data = await response.json();
@@ -89,7 +92,7 @@ function updateEditLink() {
   if (localStorage.getItem("token")) {
     const editLink = document.createElement("a");
     editLink.href = "#";
-    editLink.id = "edit-link";
+    editLink.id = "editLink";
     editLink.classList.add("edit-link");
 
     const icon = document.createElement("img");
@@ -102,8 +105,11 @@ function updateEditLink() {
     document
       .querySelector("#portfolio h2")
       .insertAdjacentElement("afterend", editLink);
-  } else {
-    document.querySelector("#edit-link").remove();
+    
+      editLink.addEventListener('click', showModal);
+
+    } else {
+    document.querySelector("#editLink").remove();
   }
 }
 
@@ -114,7 +120,7 @@ function logout(event) {
   updateEditLink();
 }
 
-const projects = await getProjects();
+export const projects = await getProjects();
 displayProjects(projects);
 
 const categories = getCategories(projects);
@@ -122,3 +128,5 @@ displayCategoriesButtons(categories);
 
 updateAuthLink();
 updateEditLink();
+
+

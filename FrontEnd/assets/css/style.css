@@ -329,3 +329,21 @@ footer nav ul {
   justify-content: flex-end;
   margin: 2em;
 }
+
+
+.edit-bar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 11.42px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 59px;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+  background-color: rgba(0, 0, 0, 1);
+}
+

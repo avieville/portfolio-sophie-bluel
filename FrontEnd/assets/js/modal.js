@@ -1,6 +1,8 @@
 import { projects } from "./app.js";
+import { setEditMode } from "./edit-bar.js";
 
 export function showModal(event) {
+  
   event.preventDefault();
 
   if (document.querySelector("#modal")) {
@@ -54,8 +56,6 @@ export function showModal(event) {
     });
   }
 
-  // <input type="text" name="categorie" id="modal-form-categorie">
-
   if (context === "add") {
     htmlString += `
 
@@ -99,6 +99,8 @@ export function showModal(event) {
     </div>
     </div>`;
 
+    
+
   document.body.insertAdjacentHTML("beforeend", htmlString);
 
   //General modal
@@ -110,11 +112,6 @@ export function showModal(event) {
   modal.children[0].addEventListener("click", function (e) {
     e.stopPropagation();
   });
-
-  function removeModal() {
-    const modal = document.querySelector("#modal");
-    modal.remove();
-  }
 
   if (context === "delete") {
     document
@@ -137,6 +134,14 @@ export function showModal(event) {
       .querySelector("#modalButton")
       .addEventListener("click", addProject);
   }
+
+  setEditMode(true)
+}
+
+function removeModal() {
+  const modal = document.querySelector("#modal");
+  modal.remove();
+  setEditMode(false);
 }
 
 async function deleteProject(event) {
