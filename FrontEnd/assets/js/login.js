@@ -6,23 +6,22 @@ async function login(event) {
     password: loginForm.querySelector('input[name="password"]').value,
   };
 
-  const response = await fetch("http://localhost:5678/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    const response = await fetch("http://localhost:5678/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    window.localStorage.setItem("token", data.token);
-    window.location.assign(
-      "index.html"
-    );
-  } else {
-    loginForm.reset();
-    showInvalidCredentialMessage();
+    if (response.ok) {
+      const data = await response.json();
+      window.localStorage.setItem("token", data.token);
+      window.location.assign("index.html");
+    }
+  } catch (error) {
+    console.error(error.message);
   }
 }
 
