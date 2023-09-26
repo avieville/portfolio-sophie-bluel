@@ -19,6 +19,8 @@ async function login(event) {
       const data = await response.json();
       window.localStorage.setItem("token", data.token);
       window.location.assign("index.html");
+    } else {
+      showInvalidCredentialMessage();
     }
   } catch (error) {
     console.error(error.message);

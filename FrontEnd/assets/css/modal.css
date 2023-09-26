@@ -79,20 +79,26 @@
 }
 
 .modal__button {
-
     background-color: rgba(29, 97, 84, 1);
     color: white;
     font-family: Syne;
     font-weight: 700;
     font-size: 14px;
-    line-height: 16.8px;
-    padding: 10px 49px 9px 49px;
+    padding: 11px 50px 11px 50px;
     margin-top: 38px;
     width: 237px;
     border-radius: 60px;
     text-wrap: nowrap;
     cursor: pointer;
-   
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__button--inactive {
+    background-color: rgba(167, 167, 167, 1);
+    color: white;
 }
 
 
@@ -136,6 +142,11 @@
     font-weight: 400;
     font-size: 10px;
     font-family: 'Work sans';
+}
+
+.modal__form p.error{
+    font-size: 16px;
+    color: #b1663c;
 }
 
 .modal__form-photo-area {

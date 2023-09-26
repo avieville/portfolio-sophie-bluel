@@ -42,16 +42,21 @@
 }
 
 .login button {
-    width: 179px;
-    height: 36px;
     background-color: #1d6154;
     color: white;
     font-size: 14px;
+    height: 36px;
+    padding: 11px 40px 11px 40px;
     font-family: Syne;
     font-weight: 700;
     border-radius: 60px;
     margin-bottom: 28px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+    
 }
 
 .login a {

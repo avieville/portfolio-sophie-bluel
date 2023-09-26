@@ -118,17 +118,7 @@ function logout(event) {
   updateEditLink();
 }
 
-export let projects = await getProjects();
-displayProjects(projects);
-displayCategoriesButtons(projects);
-updateAuthLink();
-updateEditLink();
-
-/*MODAL*/
-
-function buildModal(context){
- 
-
+function buildModal(context) {
   const modal = document.createElement("div");
   modal.setAttribute("class", "modal");
   modal.setAttribute("id", "modal");
@@ -219,8 +209,8 @@ function buildModal(context){
     fileInput.setAttribute("id", "file");
     fileInput.setAttribute("class", "modal__form-file-input");
     fileInput.setAttribute("accept", "image/*");
-    fileInput.addEventListener("change", previewUploadFile);
-
+    fileInput.setAttribute("required", "true");
+    fileInput.setAttribute("accept", ".jpg, .jpeg, .png");
     const p = document.createElement("p");
     p.textContent = "jpg, png : 4mo max";
 
@@ -240,6 +230,8 @@ function buildModal(context){
     titleInput.setAttribute("type", "text");
     titleInput.setAttribute("name", "title");
     titleInput.setAttribute("id", "modal-form-title");
+    titleInput.setAttribute("required", true);
+    titleInput.setAttribute("minlength", 3);
 
     const categoryFormGroup = document.createElement("div");
     categoryFormGroup.classList.add(
@@ -254,6 +246,7 @@ function buildModal(context){
     const categorySelect = document.createElement("select");
     categorySelect.setAttribute("name", "categorie");
     categorySelect.setAttribute("id", "modal-form-categorie");
+    categorySelect.setAttribute("required", true);
 
     const option1 = document.createElement("option");
     option1.value = "";
@@ -283,35 +276,41 @@ function buildModal(context){
     categoryFormGroup.appendChild(categoryLabel);
     categoryFormGroup.appendChild(categorySelect);
 
+    form.addEventListener("input", inputEventListenerCallback);
+
     container.appendChild(form);
-
-
-
-
   }
 
+  const formMessageDialog = document.createElement("p");
+  formMessageDialog.setAttribute("id", "formMessageDialog");
+
   const button = document.createElement("button");
-  button.setAttribute("class", "modal__button");
+  button.classList =
+    context === "add"
+      ? "modal__button modal__button--inactive"
+      : "modal__button";
   button.setAttribute("id", "modalButton");
   button.setAttribute("data-modal", "add");
   button.textContent = context === "delete" ? "Ajouter une photo" : "Valider";
+  button.disabled = context === "add";
+
   modalContent.appendChild(closeIcon);
   modalContent.appendChild(h1);
   modalContent.appendChild(container);
+  context == 'add' ? modalContent.appendChild(formMessageDialog) : ''
   modalContent.appendChild(button);
   modal.appendChild(modalContent);
-
   modal.children[0].addEventListener("click", function (e) {
     e.stopPropagation();
   });
 
-  const cb = context=="delete" ? showModal : addProject
-  button.addEventListener("click", cb)
+  const cb = context == "delete" ? showModal : addProject;
+  button.addEventListener("click", cb);
 
-  return modal
+  return modal;
 }
 
-export function showModal(event) {
+function showModal(event) {
   event.preventDefault();
 
   const context = event.target.dataset.modal;
@@ -320,7 +319,7 @@ export function showModal(event) {
     removeModal();
   }
 
-  const  modal = buildModal(context);
+  const modal = buildModal(context);
   document.body.appendChild(modal);
 
   setEditMode(true);
@@ -328,7 +327,9 @@ export function showModal(event) {
 
 function removeModal() {
   const modal = document.querySelector("#modal");
+  selectedFile = null;
   modal.remove();
+
   setEditMode(false);
 }
 
@@ -393,21 +394,78 @@ async function addProject(event) {
 
 function previewUploadFile(event) {
   if (event.target.files.length > 0) {
+    // selectedFile = event.target.files[0];
+
     const src = URL.createObjectURL(event.target.files[0]);
     const preview = document.querySelector("#form-photo-area");
     document.querySelector(".modal__form-file-group").style.display = "none";
 
     preview.innerHTML += `
       <img class="form__preview" id="form-preview" src="${src}" alt="preview">
-    
     `;
-
-    selectedFile = event.target.files[0];
-
-    console.log(event.target.files);
-    console.log(event.target);
-    console.log(document.querySelector("#file").files);
   }
 }
 
+function inputEventListenerCallback(event) {
+  if (event.target.id === "file") {
+    selectedFile = event.target.files[0];
+    previewUploadFile(event);
+  }
+  checkValidityFormAndEnableButton(event, selectedFile);
+}
+
+function checkValidityFormAndEnableButton(event, selectedFile) {
+  const titleInput = document.querySelector("#modal-form-title");
+  const selectInput = document.querySelector("#modal-form-categorie");
+  const button = document.querySelector("#modalButton");
+  let invalidFieldDetected = false;
+
+  if (
+    titleInput.value.trim().length < 1 ||
+    selectInput.value == "" ||
+    !selectedFile
+  ) {
+    invalidFieldDetected = true;
+  }
+
+  if (selectedFile) {
+    const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+    const fileSize = selectedFile.size;
+    const allowedExtensions = ["jpg", "jpeg", "png"];
+    const allowedMaxSize = 4194304;
+
+    if (
+      !allowedExtensions.includes(fileExtension) ||
+      fileSize > allowedMaxSize
+    ) {
+      invalidFieldDetected = true;
+
+      document.querySelector('.modal__form p').classList.add('error');
+      document.querySelector(".modal__form-file-group").style.display = "flex";
+      const preview = document.querySelector("#form-preview");
+      if (preview) {
+        preview.remove();
+      }
+    }
+  }
+
+  button.disabled = invalidFieldDetected;
+
+  if (invalidFieldDetected) {
+    button.classList.add("modal__button--inactive");
+    document.querySelector('#formMessageDialog').innerText='Tous les champs sont requis'
+
+  } else {
+    button.classList.remove("modal__button--inactive");
+    document.querySelector('#formMessageDialog').innerText=''
+  }
+}
+
+export let projects = await getProjects();
 let selectedFile = null;
+displayProjects(projects);
+displayCategoriesButtons(projects);
+updateAuthLink();
+updateEditLink();
+
+
