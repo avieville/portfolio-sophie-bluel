@@ -348,10 +348,16 @@ async function deleteProject(event) {
     });
 
     if (response.ok) {
+
       projects = projects.filter((project) => project.id !== id);
       displayProjects(projects);
       displayCategoriesButtons(projects);
-      removeModal();
+      
+      const cardDeleted = document.querySelector(`img[data-id="${id}"]`).parentNode;
+      if(cardDeleted){
+        cardDeleted.remove()
+      }
+
     }
   } catch (error) {
     console.error(error.message);
@@ -385,7 +391,10 @@ async function addProject(event) {
       projects = await getProjects();
       displayProjects(projects);
       displayCategoriesButtons(projects);
-      removeModal();
+      form.reset();
+      removePreview();
+      selectedFile = null;
+
     }
   } catch (error) {
     console.error(error.message);
@@ -394,7 +403,7 @@ async function addProject(event) {
 
 function previewUploadFile(event) {
   if (event.target.files.length > 0) {
-    // selectedFile = event.target.files[0];
+
 
     const src = URL.createObjectURL(event.target.files[0]);
     const preview = document.querySelector("#form-photo-area");
@@ -441,11 +450,8 @@ function checkValidityFormAndEnableButton(event, selectedFile) {
       invalidFieldDetected = true;
 
       document.querySelector('.modal__form p').classList.add('error');
-      document.querySelector(".modal__form-file-group").style.display = "flex";
-      const preview = document.querySelector("#form-preview");
-      if (preview) {
-        preview.remove();
-      }
+
+      removePreview();
     }
   }
 
@@ -459,6 +465,14 @@ function checkValidityFormAndEnableButton(event, selectedFile) {
     button.classList.remove("modal__button--inactive");
     document.querySelector('#formMessageDialog').innerText=''
   }
+}
+
+function removePreview(){
+  document.querySelector(".modal__form-file-group").style.display = "flex";
+      const preview = document.querySelector("#form-preview");
+      if (preview) {
+        preview.remove();
+      }
 }
 
 export let projects = await getProjects();
