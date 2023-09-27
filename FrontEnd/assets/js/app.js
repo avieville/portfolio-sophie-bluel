@@ -12,7 +12,7 @@ async function getProjects() {
   }
 }
 
-export function displayProjects(projects) {
+function displayProjects(projects) {
   const gallery = document.querySelector("#gallery");
   gallery.innerHTML = "";
 
@@ -32,7 +32,7 @@ export function displayProjects(projects) {
   });
 }
 
-export function displayCategoriesButtons(projects) {
+function displayCategoriesButtons(projects) {
   const categories = new Set(["Tous"]);
   projects.forEach((projet) => {
     categories.add(projet.category.name);
@@ -41,13 +41,12 @@ export function displayCategoriesButtons(projects) {
   const filters = document.querySelector("#filters");
   filters.innerHTML = "";
 
-  categories.forEach((categorie) => {
+  categories.forEach((category) => {
     const button = document.createElement("button");
-    button.innerText = categorie;
-    button.className =
-      categorie != "Tous"
-        ? "filters__btn"
-        : "filters__btn filters__btn--active";
+    button.innerText = category;
+    button.className = `filters__btn ${
+      category === "Tous" ? "filters__btn--active" : ""
+    }`;
     button.addEventListener("click", filterAndDisplay);
     filters.appendChild(button);
   });
@@ -87,27 +86,32 @@ function updateAuthLink() {
 }
 
 function updateEditLink() {
-  if (localStorage.getItem("token")) {
-    const editLink = document.createElement("a");
-    editLink.href = "#";
-    editLink.id = "editLink";
-    editLink.dataset.modal = "delete";
-    editLink.classList.add("edit-link");
+  const editLink = document.querySelector("#editLink");
+  const token = localStorage.getItem("token");
 
-    const icon = document.createElement("img");
-    icon.src = "./assets/icons/edit.png";
-    icon.alt = "Instagram";
+  if (token) {
+    if (!editLink) {
+      const editLink = document.createElement("a");
+      editLink.href = "#";
+      editLink.id = "editLink";
+      editLink.dataset.modal = "delete";
+      editLink.classList.add("edit-link");
 
-    editLink.appendChild(icon);
-    editLink.appendChild(document.createTextNode(" modifier"));
+      const icon = document.createElement("img");
+      icon.src = "./assets/icons/edit.png";
+      icon.alt = "Instagram";
 
-    document
-      .querySelector("#portfolio h2")
-      .insertAdjacentElement("afterend", editLink);
+      editLink.appendChild(icon);
+      editLink.appendChild(document.createTextNode(" modifier"));
 
-    editLink.addEventListener("click", showModal);
-  } else {
-    document.querySelector("#editLink").remove();
+      document
+        .querySelector("#portfolio h2")
+        .insertAdjacentElement("afterend", editLink);
+
+      editLink.addEventListener("click", showModal);
+    }
+  } else if (editLink) {
+    editLink.remove();
   }
 }
 
@@ -120,57 +124,54 @@ function logout(event) {
 
 function buildModal(context) {
   const modal = document.createElement("div");
-  modal.setAttribute("class", "modal");
-  modal.setAttribute("id", "modal");
-  modal.setAttribute("role", "dialog");
+  modal.className = "modal";
+  modal.id = "modal";
+  modal.role = "dialog";
   modal.addEventListener("click", removeModal);
 
   const modalContent = document.createElement("div");
-  modalContent.setAttribute("class", "modal__content");
+  modalContent.className = "modal__content";
 
   const closeIcon = document.createElement("img");
-  closeIcon.setAttribute("src", "./assets/icons/close.png");
-  closeIcon.setAttribute("alt", "closing cross");
-  closeIcon.setAttribute("class", "modal__closing-cross");
-  closeIcon.setAttribute("id", "modal-closing-cross");
+  closeIcon.src = "./assets/icons/close.png";
+  closeIcon.alt = "closing cross";
+  closeIcon.className = "modal__closing-cross";
+  closeIcon.id = "modal-closing-cross";
   closeIcon.addEventListener("click", removeModal);
 
-  if (context == "add") {
+  if (context === "add") {
     const arrowLeftIcon = document.createElement("img");
-    arrowLeftIcon.setAttribute("src", "./assets/icons/arrow-left.png");
-    arrowLeftIcon.setAttribute("alt", "arrow left");
-    arrowLeftIcon.setAttribute("class", "modal__arrow-left");
-    arrowLeftIcon.setAttribute("id", "modalArrowLeft");
+    arrowLeftIcon.src = "./assets/icons/arrow-left.png";
+    arrowLeftIcon.alt = "arrow left";
+    arrowLeftIcon.className = "modal__arrow-left";
+    arrowLeftIcon.id = "modalArrowLeft";
     arrowLeftIcon.setAttribute("data-modal", "delete");
     arrowLeftIcon.addEventListener("click", showModal);
     modalContent.appendChild(arrowLeftIcon);
   }
 
   const h1 = document.createElement("h1");
-  h1.setAttribute("class", "modal__title");
-  h1.textContent = context == "delete" ? "Galerie Photo" : "Ajout photo";
+  h1.className = "modal__title";
+  h1.textContent = context === "delete" ? "Galerie Photo" : "Ajout photo";
 
   const container = document.createElement("div");
-  container.setAttribute(
-    "class",
-    context === "delete" ? "modal__cards" : "modal__form"
-  );
+  container.className = context === "delete" ? "modal__cards" : "modal__form";
 
-  if (context == "delete") {
+  if (context === "delete") {
     projects.forEach((project) => {
       const card = document.createElement("div");
-      card.setAttribute("class", "modal__card");
+      card.className = "modal__card";
 
       const image = document.createElement("img");
-      image.setAttribute("src", project.imageUrl);
-      image.setAttribute("alt", project.title);
-      image.setAttribute("class", "modal__card-image");
+      image.src = project.imageUrl;
+      image.alt = project.title;
+      image.className = "modal__card-image";
 
       const bin = document.createElement("img");
-      bin.setAttribute("src", "./assets/icons/bin.png");
-      bin.setAttribute("alt", "bin");
-      bin.setAttribute("class", "modal__card-bin");
-      bin.setAttribute("id", "modal-card-bin");
+      bin.src = "./assets/icons/bin.png";
+      bin.alt = "bin";
+      bin.className = "modal__card-bin";
+      bin.id = "modal-card-bin";
       bin.setAttribute("data-id", project.id);
       bin.addEventListener("click", deleteProject);
 
@@ -181,36 +182,33 @@ function buildModal(context) {
     });
   }
 
-  if (context == "add") {
+  if (context === "add") {
     const form = document.createElement("form");
-    form.setAttribute("action", "#");
-    form.setAttribute("id", "modal-form");
+    form.action = "#";
+    form.id = "modal-form";
 
     const photoArea = document.createElement("div");
-    photoArea.classList.add("modal__form-photo-area");
-    photoArea.setAttribute("id", "form-photo-area");
+    photoArea.className = "modal__form-photo-area";
+    photoArea.id = "form-photo-area";
 
     const fileGroup = document.createElement("div");
-    fileGroup.classList.add("modal__form-file-group");
+    fileGroup.className = "modal__form-file-group";
 
     const landscape = document.createElement("img");
-    landscape.classList.add("modal__form-landscape");
-    landscape.setAttribute("src", "./assets/icons/landscape.png");
-    landscape.setAttribute("alt", "landscape");
+    landscape.className = "modal__form-landscape";
+    landscape.src = "./assets/icons/landscape.png";
+    landscape.alt = "landscape";
 
     const fileLabel = document.createElement("label");
-    fileLabel.setAttribute("for", "file");
-    fileLabel.setAttribute("class", "modal__form-file-input-label");
+    fileLabel.htmlFor = "file";
+    fileLabel.className = "modal__form-file-input-label";
     fileLabel.textContent = "+ Ajouter photo";
 
     const fileInput = document.createElement("input");
-    fileInput.setAttribute("type", "file");
-    fileInput.setAttribute("name", "modal__form-file-input");
-    fileInput.setAttribute("id", "file");
-    fileInput.setAttribute("class", "modal__form-file-input");
-    fileInput.setAttribute("accept", "image/*");
-    fileInput.setAttribute("required", "true");
-    fileInput.setAttribute("accept", ".jpg, .jpeg, .png");
+    fileInput.id = "file";
+    fileInput.className = "modal__form-file-input";
+    fileInput.type = "file";
+    fileInput.name = "modal__form-file-input";
     const p = document.createElement("p");
     p.textContent = "jpg, png : 4mo max";
 
@@ -223,47 +221,41 @@ function buildModal(context) {
     titleFormGroup.classList.add("modal__form-group", "form-group-title");
 
     const titleLabel = document.createElement("label");
-    titleLabel.setAttribute("for", "modal-form-title");
+    titleLabel.htmlFor = "modal-form-title";
     titleLabel.textContent = "Titre";
 
     const titleInput = document.createElement("input");
-    titleInput.setAttribute("type", "text");
-    titleInput.setAttribute("name", "title");
-    titleInput.setAttribute("id", "modal-form-title");
-    titleInput.setAttribute("required", true);
-    titleInput.setAttribute("minlength", 3);
+    titleInput.id = "modal-form-title";
+    titleInput.type = "text";
+    titleInput.name = "title";
 
     const categoryFormGroup = document.createElement("div");
     categoryFormGroup.classList.add(
       "modal__form-group",
-      "form-group-categorie"
+      "form-group-category"
     );
 
     const categoryLabel = document.createElement("label");
-    categoryLabel.setAttribute("for", "modal-form-categorie");
+    categoryLabel.htmlFor = "modal-form-category";
     categoryLabel.textContent = "Catégorie";
 
     const categorySelect = document.createElement("select");
-    categorySelect.setAttribute("name", "categorie");
-    categorySelect.setAttribute("id", "modal-form-categorie");
-    categorySelect.setAttribute("required", true);
+    categorySelect.id = "modal-form-category";
+    categorySelect.name = "category";
 
-    const option1 = document.createElement("option");
-    option1.value = "";
-    const option2 = document.createElement("option");
-    option2.value = "1";
-    option2.textContent = "Objets";
-    const option3 = document.createElement("option");
-    option3.value = "2";
-    option3.textContent = "Appartements";
-    const option4 = document.createElement("option");
-    option4.value = "3";
-    option4.textContent = "Hotel & restaurants";
+    const categories = [
+      { value: "", text: "" },
+      { value: "1", text: "Objets" },
+      { value: "2", text: "Appartements" },
+      { value: "3", text: "Hotel & restaurants" },
+    ];
 
-    categorySelect.appendChild(option1);
-    categorySelect.appendChild(option2);
-    categorySelect.appendChild(option3);
-    categorySelect.appendChild(option4);
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.value;
+      option.textContent = category.text;
+      categorySelect.appendChild(option);
+    });
 
     form.appendChild(photoArea);
     photoArea.appendChild(fileGroup);
@@ -276,20 +268,19 @@ function buildModal(context) {
     categoryFormGroup.appendChild(categoryLabel);
     categoryFormGroup.appendChild(categorySelect);
 
-    form.addEventListener("input", inputEventListenerCallback);
+    form.addEventListener("input", checkValidityFormAndEnableButton);
 
     container.appendChild(form);
   }
 
   const formMessageDialog = document.createElement("p");
-  formMessageDialog.setAttribute("id", "formMessageDialog");
+  formMessageDialog.id = "formMessageDialog";
 
   const button = document.createElement("button");
-  button.classList =
-    context === "add"
-      ? "modal__button modal__button--inactive"
-      : "modal__button";
-  button.setAttribute("id", "modalButton");
+  button.className = `modal__button ${
+    context === "add" ? "modal__button--inactive" : ""
+  }`;
+  button.id = "modalButton";
   button.setAttribute("data-modal", "add");
   button.textContent = context === "delete" ? "Ajouter une photo" : "Valider";
   button.disabled = context === "add";
@@ -297,14 +288,14 @@ function buildModal(context) {
   modalContent.appendChild(closeIcon);
   modalContent.appendChild(h1);
   modalContent.appendChild(container);
-  context == 'add' ? modalContent.appendChild(formMessageDialog) : ''
+  context === "add" ? modalContent.appendChild(formMessageDialog) : "";
   modalContent.appendChild(button);
   modal.appendChild(modalContent);
   modal.children[0].addEventListener("click", function (e) {
     e.stopPropagation();
   });
 
-  const cb = context == "delete" ? showModal : addProject;
+  const cb = context === "delete" ? showModal : addProject;
   button.addEventListener("click", cb);
 
   return modal;
@@ -312,25 +303,20 @@ function buildModal(context) {
 
 function showModal(event) {
   event.preventDefault();
-
+  removeModal();
   const context = event.target.dataset.modal;
-
-  if (document.querySelector("#modal")) {
-    removeModal();
-  }
-
   const modal = buildModal(context);
   document.body.appendChild(modal);
-
   setEditMode(true);
 }
 
 function removeModal() {
   const modal = document.querySelector("#modal");
-  selectedFile = null;
-  modal.remove();
-
-  setEditMode(false);
+  if (modal) {
+    modal.remove();
+    setEditMode(false);
+    selectedFile = null;
+  }
 }
 
 async function deleteProject(event) {
@@ -348,16 +334,17 @@ async function deleteProject(event) {
     });
 
     if (response.ok) {
-
       projects = projects.filter((project) => project.id !== id);
       displayProjects(projects);
       displayCategoriesButtons(projects);
-      
-      const cardDeleted = document.querySelector(`img[data-id="${id}"]`).parentNode;
-      if(cardDeleted){
-        cardDeleted.remove()
-      }
 
+      const cardDeleted = document.querySelector(
+        `img[data-id="${id}"]`
+      ).parentNode;
+
+      if (cardDeleted) {
+        cardDeleted.remove();
+      }
     }
   } catch (error) {
     console.error(error.message);
@@ -365,18 +352,14 @@ async function deleteProject(event) {
 }
 
 async function addProject(event) {
-  event.preventDefault();
-
   const form = document.querySelector("#modal-form");
   const token = localStorage.getItem("token");
+  const select = document.getElementById("modal-form-category");
+
   const formData = new FormData();
-  const selectElement = form.querySelector("#modal-form-categorie");
   formData.append("image", selectedFile);
-  formData.append("title", form.querySelector("#modal-form-title").value);
-  formData.append(
-    "category",
-    parseInt(selectElement.options[selectElement.selectedIndex].value)
-  );
+  formData.append("title", document.getElementById("modal-form-title").value);
+  formData.append("category", select.options[select.selectedIndex].value);
 
   try {
     let response = await fetch("http://localhost:5678/api/works/", {
@@ -392,40 +375,52 @@ async function addProject(event) {
       displayProjects(projects);
       displayCategoriesButtons(projects);
       form.reset();
-      removePreview();
+      removePreviewUploadFile();
       selectedFile = null;
 
+      const button = document.querySelector("#modalButton");
+      button.disabled = true;
+      button.classList.add("modal__button--inactive");
+
+      document.querySelector("#formMessageDialog").innerText = "Projet ajouté";
+      document.querySelector(".modal__form p").classList.remove("error");
     }
   } catch (error) {
     console.error(error.message);
   }
 }
 
-function previewUploadFile(event) {
-  if (event.target.files.length > 0) {
+function showPreviewUploadFile(selectedFile) {
+  const src = URL.createObjectURL(selectedFile);
+  const preview = document.querySelector("#form-photo-area");
+  const fileGroup = document.querySelector(".modal__form-file-group");
 
+  const img = document.createElement("img");
+  img.className = "form__preview";
+  img.id = "form-preview";
+  img.src = src;
+  img.alt = "preview";
 
-    const src = URL.createObjectURL(event.target.files[0]);
-    const preview = document.querySelector("#form-photo-area");
-    document.querySelector(".modal__form-file-group").style.display = "none";
+  preview.appendChild(img);
+  fileGroup.style.display = "none";
+}
 
-    preview.innerHTML += `
-      <img class="form__preview" id="form-preview" src="${src}" alt="preview">
-    `;
+function removePreviewUploadFile() {
+  document.querySelector(".modal__form-file-group").style.display = "flex";
+  const preview = document.querySelector("#form-preview");
+  if (preview) {
+    preview.remove();
   }
 }
 
-function inputEventListenerCallback(event) {
+function checkValidityFormAndEnableButton(event) {
   if (event.target.id === "file") {
     selectedFile = event.target.files[0];
-    previewUploadFile(event);
+    showPreviewUploadFile(selectedFile);
   }
-  checkValidityFormAndEnableButton(event, selectedFile);
-}
 
-function checkValidityFormAndEnableButton(event, selectedFile) {
   const titleInput = document.querySelector("#modal-form-title");
-  const selectInput = document.querySelector("#modal-form-categorie");
+  const selectInput = document.querySelector("#modal-form-category");
   const button = document.querySelector("#modalButton");
   let invalidFieldDetected = false;
 
@@ -449,9 +444,9 @@ function checkValidityFormAndEnableButton(event, selectedFile) {
     ) {
       invalidFieldDetected = true;
 
-      document.querySelector('.modal__form p').classList.add('error');
+      document.querySelector(".modal__form p").classList.add("error");
 
-      removePreview();
+      removePreviewUploadFile();
     }
   }
 
@@ -459,27 +454,17 @@ function checkValidityFormAndEnableButton(event, selectedFile) {
 
   if (invalidFieldDetected) {
     button.classList.add("modal__button--inactive");
-    document.querySelector('#formMessageDialog').innerText='Tous les champs sont requis'
-
+    document.querySelector("#formMessageDialog").innerText =
+      "Tous les champs sont requis";
   } else {
     button.classList.remove("modal__button--inactive");
-    document.querySelector('#formMessageDialog').innerText=''
+    document.querySelector("#formMessageDialog").innerText = "";
   }
 }
 
-function removePreview(){
-  document.querySelector(".modal__form-file-group").style.display = "flex";
-      const preview = document.querySelector("#form-preview");
-      if (preview) {
-        preview.remove();
-      }
-}
-
-export let projects = await getProjects();
+let projects = await getProjects();
 let selectedFile = null;
 displayProjects(projects);
 displayCategoriesButtons(projects);
 updateAuthLink();
 updateEditLink();
-
-

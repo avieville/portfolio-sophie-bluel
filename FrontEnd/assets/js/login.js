@@ -2,8 +2,8 @@ async function login(event) {
   event.preventDefault();
 
   const body = {
-    email: loginForm.querySelector('input[name="email"]').value,
-    password: loginForm.querySelector('input[name="password"]').value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
   };
 
   try {
