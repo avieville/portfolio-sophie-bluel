@@ -1,128 +1,10 @@
+import { projects } from "./main.js";
+import { handleDeleteProject, handleaddProject } from "./main.js";
 import { setEditMode } from "./edit-bar.js";
 
-async function getProjects() {
-  try {
-    const response = await fetch("http://localhost:5678/api/works");
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-  } catch (error) {
-    console.error(error.message);
-  }
-}
+export let selectedFile = null;
 
-function displayProjects(projects) {
-  const gallery = document.querySelector("#gallery");
-  gallery.innerHTML = "";
-
-  projects.forEach((project) => {
-    const figure = document.createElement("figure");
-
-    const img = document.createElement("img");
-    img.src = project.imageUrl;
-    img.alt = project.title;
-    figure.appendChild(img);
-
-    const figcaption = document.createElement("figcaption");
-    figcaption.innerText = project.title;
-    figure.appendChild(figcaption);
-
-    gallery.appendChild(figure);
-  });
-}
-
-function displayCategoriesButtons(projects) {
-  const categories = new Set(["Tous"]);
-  projects.forEach((projet) => {
-    categories.add(projet.category.name);
-  });
-
-  const filters = document.querySelector("#filters");
-  filters.innerHTML = "";
-
-  categories.forEach((category) => {
-    const button = document.createElement("button");
-    button.innerText = category;
-    button.className = `filters__btn ${
-      category === "Tous" ? "filters__btn--active" : ""
-    }`;
-    button.addEventListener("click", filterAndDisplay);
-    filters.appendChild(button);
-  });
-}
-
-function filterAndDisplay(event) {
-  document.querySelectorAll(".filters__btn").forEach((btn) => {
-    btn.classList.remove("filters__btn--active");
-  });
-
-  event.target.classList.add("filters__btn--active");
-
-  const filter = event.target.innerText;
-
-  if (filter === "Tous") {
-    displayProjects(projects);
-  } else {
-    const projectsFiltered = projects.filter(
-      (project) => filter === project.category.name
-    );
-    displayProjects(projectsFiltered);
-  }
-}
-
-function updateAuthLink() {
-  const authLink = document.getElementById("auth-link");
-
-  if (localStorage.getItem("token")) {
-    authLink.href = "#";
-    authLink.innerText = "logout";
-    authLink.addEventListener("click", logout);
-  } else {
-    authLink.innerText = "login";
-    authLink.removeEventListener("click", logout);
-    authLink.href = "./login.html";
-  }
-}
-
-function updateEditLink() {
-  const editLink = document.querySelector("#editLink");
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    if (!editLink) {
-      const editLink = document.createElement("a");
-      editLink.href = "#";
-      editLink.id = "editLink";
-      editLink.dataset.modal = "delete";
-      editLink.classList.add("edit-link");
-
-      const icon = document.createElement("img");
-      icon.src = "./assets/icons/edit.png";
-      icon.alt = "Instagram";
-
-      editLink.appendChild(icon);
-      editLink.appendChild(document.createTextNode(" modifier"));
-
-      document
-        .querySelector("#portfolio h2")
-        .insertAdjacentElement("afterend", editLink);
-
-      editLink.addEventListener("click", showModal);
-    }
-  } else if (editLink) {
-    editLink.remove();
-  }
-}
-
-function logout(event) {
-  event.preventDefault();
-  localStorage.removeItem("token");
-  updateAuthLink();
-  updateEditLink();
-}
-
-function buildModal(context) {
+export function buildModal(context, projects) {
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal";
@@ -173,7 +55,7 @@ function buildModal(context) {
       bin.className = "modal__card-bin";
       bin.id = "modal-card-bin";
       bin.setAttribute("data-id", project.id);
-      bin.addEventListener("click", deleteProject);
+      bin.addEventListener("click", handleDeleteProject);
 
       card.appendChild(image);
       card.appendChild(bin);
@@ -230,10 +112,7 @@ function buildModal(context) {
     titleInput.name = "title";
 
     const categoryFormGroup = document.createElement("div");
-    categoryFormGroup.classList.add(
-      "modal__form-group",
-      "form-group-category"
-    );
+    categoryFormGroup.classList.add("modal__form-group", "form-group-category");
 
     const categoryLabel = document.createElement("label");
     categoryLabel.htmlFor = "modal-form-category";
@@ -273,11 +152,9 @@ function buildModal(context) {
     container.appendChild(form);
   }
 
-
-    const formMessageDialog = document.createElement("p");
-    formMessageDialog.id = "formMessageDialog";
-    formMessageDialog.className ="formMessageDialog";
-
+  const formMessageDialog = document.createElement("p");
+  formMessageDialog.id = "formMessageDialog";
+  formMessageDialog.className = "formMessageDialog";
 
   const button = document.createElement("button");
   button.className = `modal__button ${
@@ -298,121 +175,27 @@ function buildModal(context) {
     e.stopPropagation();
   });
 
-  const cb = context === "delete" ? showModal : addProject;
+  const cb = context === "delete" ? showModal : handleaddProject;
   button.addEventListener("click", cb);
 
   return modal;
 }
 
-function showModal(event) {
-  event.preventDefault();
+export function showModal(e) {
+  e.preventDefault();
   removeModal();
-  const context = event.target.dataset.modal;
-  const modal = buildModal(context);
+  const context = e.target.dataset.modal;
+  const modal = buildModal(context, projects);
   document.body.appendChild(modal);
   setEditMode(true);
 }
 
-function removeModal() {
+export function removeModal() {
   const modal = document.querySelector("#modal");
   if (modal) {
     modal.remove();
     setEditMode(false);
     selectedFile = null;
-  }
-}
-
-async function deleteProject(event) {
-  event.stopPropagation();
-
-  try {
-    const id = +event.target.dataset.id;
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`http://localhost:5678/api/works/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      projects = projects.filter((project) => project.id !== id);
-      displayProjects(projects);
-      displayCategoriesButtons(projects);
-
-      const cardDeleted = document.querySelector(
-        `img[data-id="${id}"]`
-      ).parentNode;
-
-      if (cardDeleted) {
-        cardDeleted.remove();
-      }
-    }
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-async function addProject(event) {
-  const form = document.querySelector("#modal-form");
-  const token = localStorage.getItem("token");
-  const select = document.getElementById("modal-form-category");
-
-  const formData = new FormData();
-  formData.append("image", selectedFile);
-  formData.append("title", document.getElementById("modal-form-title").value);
-  formData.append("category", select.options[select.selectedIndex].value);
-
-  try {
-    let response = await fetch("http://localhost:5678/api/works/", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (response.ok) {
-      projects = await getProjects();
-      displayProjects(projects);
-      displayCategoriesButtons(projects);
-      form.reset();
-      removePreviewUploadFile();
-      selectedFile = null;
-
-      const button = document.querySelector("#modalButton");
-      button.disabled = true;
-      button.classList.add("modal__button--inactive");
-
-      document.querySelector("#formMessageDialog").innerText = "Projet ajouté";
-      document.querySelector(".modal__form p").classList.remove("error");
-    }
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-function showPreviewUploadFile(selectedFile) {
-  const src = URL.createObjectURL(selectedFile);
-  const preview = document.querySelector("#form-photo-area");
-  const fileGroup = document.querySelector(".modal__form-file-group");
-
-  const img = document.createElement("img");
-  img.className = "form__preview";
-  img.id = "form-preview";
-  img.src = src;
-  img.alt = "preview";
-
-  preview.appendChild(img);
-  fileGroup.style.display = "none";
-}
-
-function removePreviewUploadFile() {
-  document.querySelector(".modal__form-file-group").style.display = "flex";
-  const preview = document.querySelector("#form-preview");
-  if (preview) {
-    preview.remove();
   }
 }
 
@@ -465,9 +248,29 @@ function checkValidityFormAndEnableButton(event) {
   }
 }
 
-let projects = await getProjects();
-let selectedFile = null;
-displayProjects(projects);
-displayCategoriesButtons(projects);
-updateAuthLink();
-updateEditLink();
+function showPreviewUploadFile(selectedFile) {
+  const src = URL.createObjectURL(selectedFile);
+  const preview = document.querySelector("#form-photo-area");
+  const fileGroup = document.querySelector(".modal__form-file-group");
+
+  const img = document.createElement("img");
+  img.className = "form__preview";
+  img.id = "form-preview";
+  img.src = src;
+  img.alt = "preview";
+
+  preview.appendChild(img);
+  fileGroup.style.display = "none";
+}
+
+export function removePreviewUploadFile() {
+  document.querySelector(".modal__form-file-group").style.display = "flex";
+  const preview = document.querySelector("#form-preview");
+  if (preview) {
+    preview.remove();
+  }
+}
+
+export function setSelectedFile(file) {
+  selectedFile = file;
+}
