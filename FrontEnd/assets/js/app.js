@@ -273,12 +273,15 @@ function buildModal(context) {
     container.appendChild(form);
   }
 
-  const formMessageDialog = document.createElement("p");
-  formMessageDialog.id = "formMessageDialog";
+
+    const formMessageDialog = document.createElement("p");
+    formMessageDialog.id = "formMessageDialog";
+    formMessageDialog.className ="formMessageDialog";
+
 
   const button = document.createElement("button");
   button.className = `modal__button ${
-    context === "add" ? "modal__button--inactive" : ""
+    context === "add" ? "modal__button--inactive modal__button-add-modal" : ""
   }`;
   button.id = "modalButton";
   button.setAttribute("data-modal", "add");

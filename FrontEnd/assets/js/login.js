@@ -28,9 +28,13 @@ async function login(event) {
 }
 
 function showInvalidCredentialMessage() {
-  const message = document.createElement("p");
-  message.innerText = "Identifiant ou mot de passe invalide";
-  loginForm.appendChild(message);
+  const messageExist = document.getElementById("login-form-message");
+  if (!messageExist) {
+    const message = document.createElement("p");
+    message.id = "login-form-message";
+    message.innerText = "Erreur dans l’identifiant ou le mot de passe";
+    loginForm.appendChild(message);
+  }
 }
 
 const loginForm = document.querySelector("#login-form");

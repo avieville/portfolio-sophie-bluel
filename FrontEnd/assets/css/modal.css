@@ -94,6 +94,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
 }
 
 .modal__button--inactive {
@@ -191,4 +192,15 @@ margin-bottom: 21px;
     height: 100%;
     max-width: 80%;
     
+}
+
+.modal__button-add-modal{
+    margin-top: 18px;
+}
+
+.formMessageDialog{
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
