@@ -85,7 +85,6 @@
     font-weight: 700;
     font-size: 14px;
     padding: 11px 50px 11px 50px;
-    margin-top: 38px;
     width: 237px;
     border-radius: 60px;
     text-wrap: nowrap;
@@ -95,6 +94,7 @@
     align-items: center;
     justify-content: center;
     border: none;
+    margin-top: 18px;
 }
 
 .modal__button--inactive {
@@ -194,9 +194,7 @@ margin-bottom: 21px;
     
 }
 
-.modal__button-add-modal{
-    margin-top: 18px;
-}
+
 
 .formMessageDialog{
     height: 20px;

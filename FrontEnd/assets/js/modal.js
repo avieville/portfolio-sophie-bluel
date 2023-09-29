@@ -158,7 +158,7 @@ export function buildModal(context, works) {
 
   const button = document.createElement("button");
   button.className = `modal__button ${
-    context === "add" ? "modal__button--inactive modal__button-add-modal" : ""
+    context === "add" ? "modal__button--inactive" : ""
   }`;
   button.id = "modalButton";
   button.setAttribute("data-modal", "add");
@@ -168,7 +168,7 @@ export function buildModal(context, works) {
   modalContent.appendChild(closeIcon);
   modalContent.appendChild(h1);
   modalContent.appendChild(container);
-  context === "add" ? modalContent.appendChild(formMessageDialog) : "";
+  modalContent.appendChild(formMessageDialog)
   modalContent.appendChild(button);
   modal.appendChild(modalContent);
   modal.children[0].addEventListener("click", function (e) {
@@ -274,3 +274,5 @@ export function removePreviewUploadFile() {
 export function setSelectedFile(file) {
   selectedFile = file;
 }
+
+

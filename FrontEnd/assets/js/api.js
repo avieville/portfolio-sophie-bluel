@@ -1,6 +1,7 @@
 const API_URL = "http://localhost:5678/api";
 
 export async function login(email, password) {
+
   const body = {
     email: email,
     password: password,
@@ -15,13 +16,21 @@ export async function login(email, password) {
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) {
-      return false;
+    switch (response.status) {
+      case 200:
+        const data = await response.json();
+        window.localStorage.setItem("token", data.token);
+        return true;
+
+      case 401:
+      case 404:
+        console.error("bad credentials");
+        return false;
+
+      default:
+        return false;
     }
 
-    const data = await response.json();
-    window.localStorage.setItem("token", data.token);
-    return true;
   } catch (error) {
     console.error(error.message);
     return false;
@@ -69,10 +78,9 @@ export async function deleteWork(id, token) {
     });
 
     return response.ok;
+
   } catch (error) {
     console.error(error.message);
     return false;
   }
 }
-
-

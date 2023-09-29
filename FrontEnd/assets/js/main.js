@@ -58,22 +58,24 @@ function filterAndDisplay(e) {
   if (filter === "Tous") {
     displayWorks(works);
   } else {
-    const worksFiltered = works.filter(
-      (work) => filter === work.category.name
-    );
+    const worksFiltered = works.filter((work) => filter === work.category.name);
     displayWorks(worksFiltered);
   }
 }
 
-export function handleDeleteWork(e) {
+export async function handleDeleteWork(e) {
   e.stopPropagation();
 
   const id = +e.target.dataset.id;
   const token = localStorage.getItem("token");
 
-  const isDeleted = deleteWork(id, token);
+  const messageDialog = document.querySelector("#formMessageDialog");
+  messageDialog.textContent='';
+
+  const isDeleted = await deleteWork(id, token);
 
   if (isDeleted) {
+
     works = works.filter((work) => work.id !== id);
     displayWorks(works);
     displayCategoriesButtons(works);
@@ -85,6 +87,8 @@ export function handleDeleteWork(e) {
     if (cardDeleted) {
       cardDeleted.remove();
     }
+  } else{
+    messageDialog.innerText = "Un problème s'est produit lors de la suppression";
   }
 }
 
@@ -92,6 +96,7 @@ export async function handleAddWork(e) {
   const form = document.querySelector("#modal-form");
   const token = localStorage.getItem("token");
   const select = document.getElementById("modal-form-category");
+  const messageDialog = document.querySelector("#formMessageDialog");
 
   const formData = new FormData();
   formData.append("image", selectedFile);
@@ -112,8 +117,10 @@ export async function handleAddWork(e) {
     button.disabled = true;
     button.classList.add("modal__button--inactive");
 
-    document.querySelector("#formMessageDialog").innerText = "Projet ajouté";
+    messageDialog.innerText = "Projet ajouté";
     document.querySelector(".modal__form p").classList.remove("error");
+  } else {
+    messageDialog.innerText = "Un problème s'est produit lors de l'ajout";
   }
 }
 
@@ -123,4 +130,3 @@ displayWorks(works);
 displayCategoriesButtons(works);
 updateAuthLink();
 updateEditLink();
-
