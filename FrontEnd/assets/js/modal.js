@@ -1,10 +1,10 @@
-import { projects } from "./main.js";
-import { handleDeleteProject, handleaddProject } from "./main.js";
+import { works } from "./main.js";
+import { handleDeleteWork, handleAddWork } from "./main.js";
 import { setEditMode } from "./edit-bar.js";
 
 export let selectedFile = null;
 
-export function buildModal(context, projects) {
+export function buildModal(context, works) {
   const modal = document.createElement("div");
   modal.className = "modal";
   modal.id = "modal";
@@ -40,13 +40,13 @@ export function buildModal(context, projects) {
   container.className = context === "delete" ? "modal__cards" : "modal__form";
 
   if (context === "delete") {
-    projects.forEach((project) => {
+    works.forEach((work) => {
       const card = document.createElement("div");
       card.className = "modal__card";
 
       const image = document.createElement("img");
-      image.src = project.imageUrl;
-      image.alt = project.title;
+      image.src = work.imageUrl;
+      image.alt = work.title;
       image.className = "modal__card-image";
 
       const bin = document.createElement("img");
@@ -54,8 +54,8 @@ export function buildModal(context, projects) {
       bin.alt = "bin";
       bin.className = "modal__card-bin";
       bin.id = "modal-card-bin";
-      bin.setAttribute("data-id", project.id);
-      bin.addEventListener("click", handleDeleteProject);
+      bin.setAttribute("data-id", work.id);
+      bin.addEventListener("click", handleDeleteWork);
 
       card.appendChild(image);
       card.appendChild(bin);
@@ -175,7 +175,7 @@ export function buildModal(context, projects) {
     e.stopPropagation();
   });
 
-  const cb = context === "delete" ? showModal : handleaddProject;
+  const cb = context === "delete" ? showModal : handleAddWork;
   button.addEventListener("click", cb);
 
   return modal;
@@ -185,7 +185,7 @@ export function showModal(e) {
   e.preventDefault();
   removeModal();
   const context = e.target.dataset.modal;
-  const modal = buildModal(context, projects);
+  const modal = buildModal(context, works);
   document.body.appendChild(modal);
   setEditMode(true);
 }

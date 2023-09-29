@@ -1,34 +1,34 @@
 import { updateAuthLink, updateEditLink } from "./auth.js";
-import { getProjects, addProject, deleteProject } from "./api.js";
+import { getWorks, addWork, deleteWork } from "./api.js";
 import {
   selectedFile,
   setSelectedFile,
   removePreviewUploadFile,
 } from "./modal.js";
 
-function displayProjects(projects) {
+function displayWorks(works) {
   const gallery = document.querySelector("#gallery");
   gallery.innerHTML = "";
 
-  projects.forEach((project) => {
+  works.forEach((work) => {
     const figure = document.createElement("figure");
 
     const img = document.createElement("img");
-    img.src = project.imageUrl;
-    img.alt = project.title;
+    img.src = work.imageUrl;
+    img.alt = work.title;
     figure.appendChild(img);
 
     const figcaption = document.createElement("figcaption");
-    figcaption.innerText = project.title;
+    figcaption.innerText = work.title;
     figure.appendChild(figcaption);
 
     gallery.appendChild(figure);
   });
 }
 
-function displayCategoriesButtons(projects) {
+function displayCategoriesButtons(works) {
   const categories = new Set(["Tous"]);
-  projects.forEach((projet) => {
+  works.forEach((projet) => {
     categories.add(projet.category.name);
   });
 
@@ -56,27 +56,27 @@ function filterAndDisplay(e) {
   const filter = event.target.innerText;
 
   if (filter === "Tous") {
-    displayProjects(projects);
+    displayWorks(works);
   } else {
-    const projectsFiltered = projects.filter(
-      (project) => filter === project.category.name
+    const worksFiltered = works.filter(
+      (work) => filter === work.category.name
     );
-    displayProjects(projectsFiltered);
+    displayWorks(worksFiltered);
   }
 }
 
-export function handleDeleteProject(e) {
+export function handleDeleteWork(e) {
   e.stopPropagation();
 
   const id = +e.target.dataset.id;
   const token = localStorage.getItem("token");
 
-  const isDeleted = deleteProject(id, token);
+  const isDeleted = deleteWork(id, token);
 
   if (isDeleted) {
-    projects = projects.filter((project) => project.id !== id);
-    displayProjects(projects);
-    displayCategoriesButtons(projects);
+    works = works.filter((work) => work.id !== id);
+    displayWorks(works);
+    displayCategoriesButtons(works);
 
     const cardDeleted = document.querySelector(
       `img[data-id="${id}"]`
@@ -88,7 +88,7 @@ export function handleDeleteProject(e) {
   }
 }
 
-export async function handleaddProject(e) {
+export async function handleAddWork(e) {
   const form = document.querySelector("#modal-form");
   const token = localStorage.getItem("token");
   const select = document.getElementById("modal-form-category");
@@ -98,12 +98,12 @@ export async function handleaddProject(e) {
   formData.append("title", document.getElementById("modal-form-title").value);
   formData.append("category", select.options[select.selectedIndex].value);
 
-  const isAdd = await addProject(formData, token);
+  const isAdd = await addWork(formData, token);
 
   if (isAdd) {
-    projects = await getProjects();
-    displayProjects(projects);
-    displayCategoriesButtons(projects);
+    works = await getWorks();
+    displayWorks(works);
+    displayCategoriesButtons(works);
     form.reset();
     removePreviewUploadFile();
     setSelectedFile(null);
@@ -117,9 +117,10 @@ export async function handleaddProject(e) {
   }
 }
 
-export let projects = await getProjects();
+export let works = await getWorks();
 
-displayProjects(projects);
-displayCategoriesButtons(projects);
+displayWorks(works);
+displayCategoriesButtons(works);
 updateAuthLink();
 updateEditLink();
+

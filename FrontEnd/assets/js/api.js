@@ -28,7 +28,7 @@ export async function login(email, password) {
   }
 }
 
-export async function getProjects() {
+export async function getWorks() {
   try {
     const response = await fetch(`${API_URL}/works`);
     if (!response.ok) {
@@ -42,7 +42,7 @@ export async function getProjects() {
   }
 }
 
-export async function addProject(formData, token) {
+export async function addWork(formData, token) {
   try {
     let response = await fetch(`${API_URL}/works`, {
       method: "POST",
@@ -59,7 +59,7 @@ export async function addProject(formData, token) {
   }
 }
 
-export async function deleteProject(id, token) {
+export async function deleteWork(id, token) {
   try {
     const response = await fetch(`${API_URL}/works/${id}`, {
       method: "DELETE",
