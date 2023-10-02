@@ -1,4 +1,6 @@
-import { showModal } from "./modal.js";
+import { ModalManager } from "./ModalManager.js";
+import { WorkManager } from "./WorkManager.js";
+
 
 export function logout(event) {
   event.preventDefault();
@@ -44,7 +46,7 @@ export function updateEditLink() {
         .querySelector("#portfolio h2")
         .insertAdjacentElement("afterend", editLink);
 
-      editLink.addEventListener("click", showModal);
+      editLink.addEventListener("click", (e)=>ModalManager.show(e, WorkManager.works));
     }
   } else if (editLink) {
     editLink.remove();
