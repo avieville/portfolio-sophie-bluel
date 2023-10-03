@@ -1,4 +1,4 @@
-import { login } from "./api.js";
+import { ApiService } from "./ApiService.js";
 
 const loginForm = document.querySelector("#login-form");
 loginForm.addEventListener("submit", handleLogin);
@@ -9,7 +9,7 @@ async function handleLogin(e) {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const isLoggedIn = await login(email, password);
+  const isLoggedIn = await (new ApiService()).login(email, password);
 
   if (isLoggedIn) {
     window.location.assign("index.html");

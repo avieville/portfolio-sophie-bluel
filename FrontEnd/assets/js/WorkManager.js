@@ -1,6 +1,6 @@
 import { CategoryButtonManager } from "./CategoryButtonManager.js";
 import { ModalManager } from "./ModalManager.js";
-import { getWorks, addWork, deleteWork } from "./api.js";
+import { ApiService } from "./ApiService.js";
 
 export class WorkManager {
   static works = [];
@@ -16,10 +16,10 @@ export class WorkManager {
     formData.append("title", document.getElementById("modal-form-title").value);
     formData.append("category", select.options[select.selectedIndex].value);
 
-    const isAdd = await addWork(formData, token);
+    const isAdd = await (new ApiService()).addWork(formData, token);
 
     if (isAdd) {
-      this.works = await getWorks();
+      this.works = await (new ApiService()).getWorks();
       this.display(this.works);
       CategoryButtonManager.display(WorkManager.works);
       form.reset();
@@ -46,7 +46,7 @@ export class WorkManager {
     const messageDialog = document.querySelector("#formMessageDialog");
     messageDialog.textContent = "";
 
-    const isDeleted = await deleteWork(id, token);
+    const isDeleted = await (new ApiService()).deleteWork(id, token);
 
     if (isDeleted) {
       const newWorks = WorkManager.works.filter((work) => work.id !== id);
@@ -68,7 +68,7 @@ export class WorkManager {
   }
 
   static async getWorks() {
-    this.works = await getWorks();
+    this.works = await (new ApiService()).getWorks();
   }
 
   static async display(works = null) {
