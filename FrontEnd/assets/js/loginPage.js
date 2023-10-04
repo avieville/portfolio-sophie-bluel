@@ -1,4 +1,6 @@
-import { ApiService } from "./ApiService.js";
+import serviceManager from './ServiceManager.js';
+
+const apiService = serviceManager.getApiService();
 
 const loginForm = document.querySelector("#login-form");
 loginForm.addEventListener("submit", handleLogin);
@@ -9,7 +11,7 @@ async function handleLogin(e) {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const isLoggedIn = await (new ApiService()).login(email, password);
+  const isLoggedIn = await apiService.login(email, password);
 
   if (isLoggedIn) {
     window.location.assign("index.html");
@@ -27,3 +29,4 @@ function showInvalidCredentialMessage() {
     loginForm.appendChild(message);
   }
 }
+

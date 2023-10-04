@@ -1,30 +1,32 @@
-import { CategoryButtonManager } from "./CategoryButtonManager.js";
-import { ModalManager } from "./ModalManager.js";
-import { ApiService } from "./ApiService.js";
+import serviceManager from './ServiceManager.js';
 
 export class WorkManager {
-  static works = [];
+  
+  constructor() {
+    this.works = [];
+  }
 
-  static async add() {
+   async add() {
+    const modalManager = serviceManager.getModalManager();
     const form = document.querySelector("#modal-form");
     const token = localStorage.getItem("token");
     const select = document.getElementById("modal-form-category");
     const messageDialog = document.querySelector("#formMessageDialog");
 
     const formData = new FormData();
-    formData.append("image", ModalManager.selectedFile);
+    formData.append("image", serviceManager.getModalManager().selectedFile);
     formData.append("title", document.getElementById("modal-form-title").value);
     formData.append("category", select.options[select.selectedIndex].value);
 
-    const isAdd = await (new ApiService()).addWork(formData, token);
+    const isAdd = await serviceManager.getApiService().createWork(formData, token);
 
     if (isAdd) {
-      this.works = await (new ApiService()).getWorks();
-      this.display(this.works);
-      CategoryButtonManager.display(WorkManager.works);
+      this.works = await serviceManager.getApiService().getWorks();
+      this.display();
+      serviceManager.getCategoryButtonManager().display(this.works);
       form.reset();
-      ModalManager.removePreviewUploadFile();
-      ModalManager.selectedFile = null;
+      modalManager.removePreviewUploadFile();
+      modalManager.selectedFile = null;
 
       const button = document.querySelector("#modalButton");
       button.disabled = true;
@@ -37,7 +39,7 @@ export class WorkManager {
     }
   }
 
-  static async delete(e) {
+   async delete(e) {
     e.stopPropagation();
 
     const id = +e.target.dataset.id;
@@ -46,13 +48,13 @@ export class WorkManager {
     const messageDialog = document.querySelector("#formMessageDialog");
     messageDialog.textContent = "";
 
-    const isDeleted = await (new ApiService()).deleteWork(id, token);
+    const isDeleted = await serviceManager.getApiService().deleteWork(id, token);
 
     if (isDeleted) {
-      const newWorks = WorkManager.works.filter((work) => work.id !== id);
-      WorkManager.works = newWorks;
+      const newWorks = this.works.filter((work) => work.id !== id);
+      this.works = newWorks;
       this.display(this.works);
-      CategoryButtonManager.display(WorkManager.works);
+      serviceManager.getCategoryButtonManager().display(this.works);
 
       const cardDeleted = document.querySelector(
         `img[data-id="${id}"]`
@@ -67,15 +69,23 @@ export class WorkManager {
     }
   }
 
-  static async getWorks() {
-    this.works = await (new ApiService()).getWorks();
+  async getWorks() {
+    this.works = await serviceManager.apiService.getWorks();
   }
 
-  static async display(works = null) {
+  getCategories() {
+    const categories = new Set(["Tous"]);
+    this.works.forEach((work) => {
+      categories.add(work.category.name);
+    });
+    return categories;
+  }
+
+  display(work = null) {
     const gallery = document.querySelector("#gallery");
     gallery.innerHTML = "";
 
-    const worksToDisplay = works || this.works;
+    const worksToDisplay = work || this.works;
 
     worksToDisplay.forEach((work) => {
       const figure = document.createElement("figure");
@@ -93,23 +103,5 @@ export class WorkManager {
     });
   }
 
-  static filterAndDisplay(e) {
-
-    document.querySelectorAll(".filters__btn").forEach((btn) => {
-      btn.classList.remove("filters__btn--active");
-    });
-
-    e.target.classList.add("filters__btn--active");
-
-    const filter = e.target.innerText;
- 
-    if (filter === "Tous") {
-      WorkManager.display(this.works);
-    } else {
-      const worksFiltered = this.works.filter(
-        (work) => filter === work.category.name
-      );
-      WorkManager.display(worksFiltered);
-    }
-  }
+  
 }

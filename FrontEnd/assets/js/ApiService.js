@@ -1,10 +1,6 @@
 export class ApiService {
   constructor() {
-    if (!ApiService.instance) {
-      this.API_URL = "http://localhost:5678/api";
-      ApiService.instance = this;
-    }
-    return ApiService.instance;
+    this.API_URL = "http://localhost:5678/api";
   }
 
   async login(email, password) {
@@ -57,7 +53,7 @@ export class ApiService {
     }
   }
 
-  async addWork(formData, token) {
+  async createWork(formData, token) {
     try {
       let response = await fetch(`${this.API_URL}/works`, {
         method: "POST",
@@ -90,3 +86,4 @@ export class ApiService {
     }
   }
 }
+

@@ -1,31 +1,34 @@
 import { ModalBuilder } from "./ModalBuilder.js";
-import { setEditMode } from "./edit-bar.js";
+import serviceManager from "./ServiceManager.js";
+
 
 export class ModalManager {
-  static selectedFile = null;
+  constructor() {
+    this.selectedFile = null;
+  }
 
-  static show(e, works) {
+  show(e, works) {
     e.preventDefault();
     const context = e.target.dataset.modal;
     this.remove();
     const modal = ModalBuilder.create(context, works);
     document.body.appendChild(modal);
-    setEditMode(true);
+    serviceManager.editBarManager.setActivation(true);
   }
 
-  static remove() {
+  remove() {
     const modal = document.querySelector("#modal");
     if (modal) {
       modal.remove();
-      setEditMode(false);
-      ModalManager.selectedFile = null;
+      serviceManager.editBarManager.setActivation(false);
+      this.selectedFile = null;
     }
   }
 
-  static checkValidityFormAndEnableButton(event) {
+  checkValidityFormAndEnableButton(event) {
     if (event.target.id === "file") {
-      ModalManager.selectedFile = event.target.files[0];
-      this.showPreviewUploadFile(ModalManager.selectedFile);
+      this.selectedFile = event.target.files[0];
+      this.showPreviewUploadFile(this.selectedFile);
     }
 
     const titleInput = document.querySelector("#modal-form-title");
@@ -33,22 +36,28 @@ export class ModalManager {
     const button = document.querySelector("#modalButton");
     let invalidFieldDetected = false;
 
+    
+
     if (
       titleInput.value.trim().length < 1 ||
       selectInput.value == "" ||
-      !ModalManager.selectedFile
+      !this.selectedFile
     ) {
       invalidFieldDetected = true;
     }
 
-    if (ModalManager.selectedFile) {
-      const fileExtension = ModalManager.selectedFile.name
+    
+
+    if (this.selectedFile) {
+      const fileExtension = this.selectedFile.name
         .split(".")
         .pop()
         .toLowerCase();
-      const fileSize = ModalManager.selectedFile.size;
+      const fileSize = this.selectedFile.size;
       const allowedExtensions = ["jpg", "jpeg", "png"];
       const allowedMaxSize = 4194304;
+
+      
 
       if (
         !allowedExtensions.includes(fileExtension) ||
@@ -62,6 +71,8 @@ export class ModalManager {
       }
     }
 
+    
+
     button.disabled = invalidFieldDetected;
 
     if (invalidFieldDetected) {
@@ -74,8 +85,8 @@ export class ModalManager {
     }
   }
 
-  static showPreviewUploadFile() {
-    const src = URL.createObjectURL(ModalManager.selectedFile);
+  showPreviewUploadFile() {
+    const src = URL.createObjectURL(this.selectedFile);
     const preview = document.querySelector("#form-photo-area");
     const fileGroup = document.querySelector(".modal__form-file-group");
 
@@ -89,7 +100,7 @@ export class ModalManager {
     fileGroup.style.display = "none";
   }
 
-  static removePreviewUploadFile() {
+  removePreviewUploadFile() {
     document.querySelector(".modal__form-file-group").style.display = "flex";
     const preview = document.querySelector("#form-preview");
     if (preview) {

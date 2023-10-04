@@ -1,16 +1,14 @@
-import { ModalManager } from "./ModalManager.js";
-import { WorkManager } from "./WorkManager.js";
+import serviceManager from "./ServiceManager.js";
 
 export class ModalBuilder {
-  constructor(context, works) {
+  constructor(context) {
     this.context = context;
-    this.works = works;
     this.modal = this.createEmptyModal();
     this.modalContent = this.modal.firstElementChild;
   }
 
-  static create(context, works) {
-    const modalBuilder = new ModalBuilder(context, works);
+  static create(context) {
+    const modalBuilder = new ModalBuilder(context);
     return modalBuilder
       .addArrowLeftIcon()
       .addCloseIcon()
@@ -26,7 +24,7 @@ export class ModalBuilder {
     modal.className = "modal";
     modal.id = "modal";
     modal.role = "dialog";
-    modal.addEventListener("click", () => ModalManager.remove());
+    modal.addEventListener("click", () => serviceManager.getModalManager().remove());
 
     const modalContent = document.createElement("div");
     modalContent.className = "modal__content";
@@ -48,7 +46,7 @@ export class ModalBuilder {
       arrowLeftIcon.id = "modalArrowLeft";
       arrowLeftIcon.setAttribute("data-modal", "delete");
       arrowLeftIcon.addEventListener("click", (e) =>
-        ModalManager.show(e, this.works)
+      serviceManager.getModalManager().show(e, this.works)
       );
       this.modalContent.appendChild(arrowLeftIcon);
     }
@@ -61,7 +59,7 @@ export class ModalBuilder {
     closeIcon.alt = "closing cross";
     closeIcon.className = "modal__closing-cross";
     closeIcon.id = "modal-closing-cross";
-    closeIcon.addEventListener("click", () => ModalManager.remove());
+    closeIcon.addEventListener("click", () => serviceManager.getModalManager().remove());
     this.modalContent.appendChild(closeIcon);
     return this;
   }
@@ -76,12 +74,13 @@ export class ModalBuilder {
   }
 
   addMainContent() {
+    const workManager = serviceManager.getWorkManager();
     const mainContent = document.createElement("div");
     mainContent.className =
       this.context === "delete" ? "modal__cards" : "modal__form";
 
     if (this.context === "delete") {
-      this.works.forEach((work) => {
+      workManager.works.forEach((work) => {
         const card = document.createElement("div");
         card.className = "modal__card";
 
@@ -96,7 +95,7 @@ export class ModalBuilder {
         bin.className = "modal__card-bin";
         bin.id = "modal-card-bin";
         bin.setAttribute("data-id", work.id);
-        bin.addEventListener("click", (e) => WorkManager.delete(e));
+        bin.addEventListener("click", (e) => workManager.delete(e));
 
         card.appendChild(image);
         card.appendChild(bin);
@@ -135,7 +134,7 @@ export class ModalBuilder {
       mainContent.innerHTML = template;
       const form = mainContent.querySelector("form");
       form.addEventListener("input", (e) =>
-        ModalManager.checkValidityFormAndEnableButton(e)
+      serviceManager.getModalManager().checkValidityFormAndEnableButton(e)
       );
     }
 
@@ -168,8 +167,8 @@ export class ModalBuilder {
 
     const callback =
       this.context === "delete"
-        ? (e) => ModalManager.show(e, this.works)
-        : () => WorkManager.add();
+        ? (e) => serviceManager.getModalManager().show(e, this.works)
+        : () => serviceManager.getWorkManager().add();
     button.addEventListener("click", callback);
 
     this.modalContent.appendChild(button);
