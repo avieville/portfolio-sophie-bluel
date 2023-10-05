@@ -1,7 +1,20 @@
 import serviceManager from "./ServiceManager.js";
 
-export class AuthManager {
-  constructor() {}
+export class Auth {
+  async login(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const isLoggedIn = await serviceManager.getHttp().login(email, password);
+
+    if (isLoggedIn) {
+      window.location.assign("index.html");
+    } else {
+      this.showInvalidCredentialMessage();
+    }
+  }
 
   logout(event) {
     event.preventDefault();
@@ -11,23 +24,21 @@ export class AuthManager {
   }
 
   updateAuthLink() {
-
-    const AuthLink  = document.getElementById("auth-link");
+    const AuthLink = document.getElementById("auth-link");
     const token = localStorage.getItem("token");
-    const cb = (e)=> this.logout(e);
+    const cb = (e) => this.logout(e);
 
     /**
-     * the removeListener did not work (nothing seen in the debugger). 
-     * so I used replaceChild to remove the properties and eventListener 
+     * the removeListener did not work (nothing seen in the debugger).
+     * so I used replaceChild to remove the properties and eventListener
      * from the element.
-    */
+     */
     const newAuthLink = AuthLink.cloneNode();
     AuthLink.parentNode.replaceChild(newAuthLink, AuthLink);
-    
+
     newAuthLink.href = token ? "#" : "./login.html";
     newAuthLink.innerText = token ? "logout" : "login";
     token && newAuthLink.addEventListener("click", cb);
-
   }
 
   updateEditLink() {
@@ -61,6 +72,16 @@ export class AuthManager {
       }
     } else if (editLink) {
       editLink.remove();
+    }
+  }
+
+  showInvalidCredentialMessage() {
+    const errorMessageElement = document.getElementById("login-form-message");
+    if (!errorMessageElement) {
+      const message = document.createElement("p");
+      message.id = "login-form-message";
+      message.innerText = "Erreur dans l’identifiant ou le mot de passe";
+      loginForm.appendChild(message);
     }
   }
 }

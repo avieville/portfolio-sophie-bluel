@@ -1,32 +1,33 @@
-import serviceManager from './ServiceManager.js';
+import serviceManager from "./ServiceManager.js";
 
 export class WorkManager {
-  
   constructor() {
     this.works = [];
   }
 
-   async add() {
-    const modalManager = serviceManager.getModalManager();
+  async add() {
+    const workForm = serviceManager.getWorkForm();
+    const http = serviceManager.getHttp();
+
     const form = document.querySelector("#modal-form");
     const token = localStorage.getItem("token");
     const select = document.getElementById("modal-form-category");
     const messageDialog = document.querySelector("#formMessageDialog");
 
     const formData = new FormData();
-    formData.append("image", serviceManager.getModalManager().selectedFile);
+    formData.append("image", workForm.selectedFile);
     formData.append("title", document.getElementById("modal-form-title").value);
     formData.append("category", select.options[select.selectedIndex].value);
 
-    const isAdd = await serviceManager.getApiService().createWork(formData, token);
+    const isAdd = await http.createWork(formData, token);
 
     if (isAdd) {
-      this.works = await serviceManager.getApiService().getWorks();
+      this.works = await http.getWorks();
       this.display();
-      serviceManager.getCategoryButtonManager().display(this.works);
+      serviceManager.getFilterButtons().display(this.works);
       form.reset();
-      modalManager.removePreviewUploadFile();
-      modalManager.selectedFile = null;
+      workForm.removePreviewUploadFile();
+      workForm.selectedFile = null;
 
       const button = document.querySelector("#modalButton");
       button.disabled = true;
@@ -39,7 +40,7 @@ export class WorkManager {
     }
   }
 
-   async delete(e) {
+  async delete(e) {
     e.stopPropagation();
 
     const id = +e.target.dataset.id;
@@ -48,13 +49,13 @@ export class WorkManager {
     const messageDialog = document.querySelector("#formMessageDialog");
     messageDialog.textContent = "";
 
-    const isDeleted = await serviceManager.getApiService().deleteWork(id, token);
+    const isDeleted = await serviceManager.getHttp().deleteWork(id, token);
 
     if (isDeleted) {
       const newWorks = this.works.filter((work) => work.id !== id);
       this.works = newWorks;
       this.display(this.works);
-      serviceManager.getCategoryButtonManager().display(this.works);
+      serviceManager.getFilterButtons().display(this.works);
 
       const cardDeleted = document.querySelector(
         `img[data-id="${id}"]`
@@ -70,7 +71,7 @@ export class WorkManager {
   }
 
   async getWorks() {
-    this.works = await serviceManager.apiService.getWorks();
+    this.works = await serviceManager.http.getWorks();
   }
 
   getCategories() {
@@ -102,6 +103,4 @@ export class WorkManager {
       gallery.appendChild(figure);
     });
   }
-
-  
 }

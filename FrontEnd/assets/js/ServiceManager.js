@@ -1,51 +1,51 @@
-import { ApiService } from './ApiService.js';
-import { WorkManager } from './WorkManager.js';
-import { CategoryButtonManager } from './CategoryButtonManager.js';
-import { ModalManager } from './ModalManager.js';
-import { EditBarManager } from './EditBarManager.js';
-import { AuthManager } from './AuthManager.js'
-
+import { Http } from "./Http.js";
+import { WorkManager } from "./WorkManager.js";
+import { FilterButtons } from "./FilterButtons.js";
+import { ModalManager } from "./ModalManager.js";
+import { EditBar } from "./EditBar.js";
+import { Auth } from "./Auth.js";
+import { WorkForm } from "./WorkForm.js";
 
 class ServiceManager {
   constructor() {
-    this.apiService = new ApiService();
+    this.http = new Http();
     this.workManager = new WorkManager();
-    this.categoriyButtonManager = new CategoryButtonManager();
+    this.filterButtons = new FilterButtons(this.workManager);
     this.modalManager = new ModalManager();
-    this.editBarManager = new EditBarManager();
-    this.authManager = new AuthManager();
-
+    this.editBar = new EditBar();
+    this.auth = new Auth();
+    this.workForm = new WorkForm();
   }
 
-  getApiService() {
-    return this.apiService;
+  getHttp() {
+    return this.http;
   }
 
   getWorkManager() {
     return this.workManager;
   }
 
-  getCategoryButtonManager() {
-    return this.categoriyButtonManager;
+  getFilterButtons() {
+    return this.filterButtons;
   }
 
   getModalManager() {
     return this.modalManager;
   }
 
-  getEditBarManager() {
-    return this.editBarManager;
+  getEditBar() {
+    return this.editBar;
   }
 
-  getAuthManager() {
-    return this.authManager;
+  getAuth() {
+    return this.auth;
   }
 
+  getWorkForm() {
+    return this.workForm;
+  }
 }
 
 const serviceManager = new ServiceManager();
 
 export default serviceManager;
-
-
-

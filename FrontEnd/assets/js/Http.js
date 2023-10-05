@@ -1,4 +1,4 @@
-export class ApiService {
+export class Http {
   constructor() {
     this.API_URL = "http://localhost:5678/api";
   }
@@ -18,21 +18,13 @@ export class ApiService {
         body: JSON.stringify(body),
       });
 
-      switch (response.status) {
-        case 200:
-          const data = await response.json();
-          this.token = data.token;
-          window.localStorage.setItem("token", this.token);
-          return true;
-
-        case 401:
-        case 404:
-          console.error("Mauvaises informations d'identification");
-          return false;
-
-        default:
-          return false;
+      if (!response.ok) {
+        return false;
       }
+
+      const data = await response.json();
+      window.localStorage.setItem("token", data.token);
+      return true;
     } catch (error) {
       console.error(error.message);
       return false;
@@ -86,4 +78,3 @@ export class ApiService {
     }
   }
 }
-

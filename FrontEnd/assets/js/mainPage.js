@@ -1,12 +1,11 @@
 import serviceManager from "./ServiceManager.js";
 
 const workManager = serviceManager.getWorkManager();
-const categoryButtonManager = serviceManager.getCategoryButtonManager();
-const authManager = serviceManager.getAuthManager();
+const filterButtons = serviceManager.getFilterButtons();
+const auth = serviceManager.getAuth();
 
 await workManager.getWorks();
 workManager.display();
-categoryButtonManager.display();
-authManager.updateAuthLink();
-authManager.updateEditLink();
-
+filterButtons.display();
+auth.updateAuthLink();
+auth.updateEditLink();

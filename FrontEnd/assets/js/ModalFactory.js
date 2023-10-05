@@ -1,22 +1,21 @@
 import serviceManager from "./ServiceManager.js";
 
-export class ModalBuilder {
-  constructor(context) {
-    this.context = context;
+export class ModalFactory {
+  constructor(modalType) {
+    this.modalType = modalType;
     this.modal = this.createEmptyModal();
     this.modalContent = this.modal.firstElementChild;
-  }
 
-  static create(context) {
-    const modalBuilder = new ModalBuilder(context);
-    return modalBuilder
-      .addArrowLeftIcon()
-      .addCloseIcon()
-      .addTitle()
-      .addMainContent()
-      .addFormMessageDialog()
-      .addButton()
-      .build();
+    if (modalType === "add") {
+      this.addArrowLeftIcon();
+    }
+    this.addCloseIcon();
+    this.addTitle();
+    this.addMainContent();
+    this.addFormMessageDialog();
+    this.addButton();
+
+    return this.modal;
   }
 
   createEmptyModal() {
@@ -24,7 +23,9 @@ export class ModalBuilder {
     modal.className = "modal";
     modal.id = "modal";
     modal.role = "dialog";
-    modal.addEventListener("click", () => serviceManager.getModalManager().remove());
+    modal.addEventListener("click", () =>
+      serviceManager.getModalManager().remove()
+    );
 
     const modalContent = document.createElement("div");
     modalContent.className = "modal__content";
@@ -38,7 +39,7 @@ export class ModalBuilder {
   }
 
   addArrowLeftIcon() {
-    if (this.context === "add") {
+    if (this.modalType === "add") {
       const arrowLeftIcon = document.createElement("img");
       arrowLeftIcon.src = "./assets/icons/arrow-left.png";
       arrowLeftIcon.alt = "arrow left";
@@ -46,7 +47,7 @@ export class ModalBuilder {
       arrowLeftIcon.id = "modalArrowLeft";
       arrowLeftIcon.setAttribute("data-modal", "delete");
       arrowLeftIcon.addEventListener("click", (e) =>
-      serviceManager.getModalManager().show(e, this.works)
+        serviceManager.getModalManager().show(e, this.works)
       );
       this.modalContent.appendChild(arrowLeftIcon);
     }
@@ -59,7 +60,9 @@ export class ModalBuilder {
     closeIcon.alt = "closing cross";
     closeIcon.className = "modal__closing-cross";
     closeIcon.id = "modal-closing-cross";
-    closeIcon.addEventListener("click", () => serviceManager.getModalManager().remove());
+    closeIcon.addEventListener("click", () =>
+      serviceManager.getModalManager().remove()
+    );
     this.modalContent.appendChild(closeIcon);
     return this;
   }
@@ -68,7 +71,7 @@ export class ModalBuilder {
     const h1 = document.createElement("h1");
     h1.className = "modal__title";
     h1.textContent =
-      this.context === "delete" ? "Galerie Photo" : "Ajout photo";
+      this.modalType === "delete" ? "Galerie Photo" : "Ajout photo";
     this.modalContent.appendChild(h1);
     return this;
   }
@@ -77,9 +80,9 @@ export class ModalBuilder {
     const workManager = serviceManager.getWorkManager();
     const mainContent = document.createElement("div");
     mainContent.className =
-      this.context === "delete" ? "modal__cards" : "modal__form";
+      this.modalType === "delete" ? "modal__cards" : "modal__form";
 
-    if (this.context === "delete") {
+    if (this.modalType === "delete") {
       workManager.works.forEach((work) => {
         const card = document.createElement("div");
         card.className = "modal__card";
@@ -104,7 +107,7 @@ export class ModalBuilder {
       });
     }
 
-    if (this.context === "add") {
+    if (this.modalType === "add") {
       const template = `
         <form action="#" id="modal-form">
           <div class="modal__form-photo-area" id="form-photo-area">
@@ -134,7 +137,7 @@ export class ModalBuilder {
       mainContent.innerHTML = template;
       const form = mainContent.querySelector("form");
       form.addEventListener("input", (e) =>
-      serviceManager.getModalManager().checkValidityFormAndEnableButton(e)
+        serviceManager.getWorkForm().checkValidityFormAndEnableButton(e)
       );
     }
 
@@ -154,28 +157,24 @@ export class ModalBuilder {
   addButton() {
     const button = document.createElement("button");
     button.className = `modal__button ${
-      this.context === "add" ? "modal__button--inactive" : ""
+      this.modalType === "add" ? "modal__button--inactive" : ""
     }`;
     button.id = "modalButton";
     button.setAttribute(
       "data-modal",
-      this.context === "add" ? "delete" : "add"
+      this.modalType === "add" ? "delete" : "add"
     );
     button.textContent =
-      this.context === "delete" ? "Ajouter une photo" : "Valider";
-    button.disabled = this.context === "add";
+      this.modalType === "delete" ? "Ajouter une photo" : "Valider";
+    button.disabled = this.modalType === "add";
 
     const callback =
-      this.context === "delete"
+      this.modalType === "delete"
         ? (e) => serviceManager.getModalManager().show(e, this.works)
         : () => serviceManager.getWorkManager().add();
     button.addEventListener("click", callback);
 
     this.modalContent.appendChild(button);
     return this;
-  }
-
-  build() {
-    return this.modal;
   }
 }
