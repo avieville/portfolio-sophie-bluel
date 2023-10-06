@@ -119,6 +119,10 @@
     gap: 6px
 }
 
+.d-none{
+    display: none;
+}
+
 .modal__form-landscape {
     height: 76px;
     width: 76px;

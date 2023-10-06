@@ -24,23 +24,23 @@ export class Auth {
   }
 
   updateAuthLink() {
-    const AuthLink = document.getElementById("auth-link");
+    const authLink = document.getElementById("auth-link");
     const token = localStorage.getItem("token");
     const cb = (e) => this.logout(e);
 
     /**
      * the removeListener did not work (nothing seen in the debugger).
-     * so I used replaceChild to remove the properties and eventListener
+     * so I used replaceChild to remove eventListener
      * from the element.
      */
-    const newAuthLink = AuthLink.cloneNode();
-    AuthLink.parentNode.replaceChild(newAuthLink, AuthLink);
+    const newAuthLink = authLink.cloneNode();
+    authLink.parentNode.replaceChild(newAuthLink, authLink);
 
     newAuthLink.href = token ? "#" : "./login.html";
     newAuthLink.innerText = token ? "logout" : "login";
     token && newAuthLink.addEventListener("click", cb);
   }
-
+  
   updateEditLink() {
     const editLink = document.querySelector("#editLink");
     const token = localStorage.getItem("token");

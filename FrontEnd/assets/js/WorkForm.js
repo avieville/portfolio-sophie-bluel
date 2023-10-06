@@ -58,8 +58,7 @@ export class WorkForm {
   showPreviewUploadFile() {
     const src = URL.createObjectURL(this.selectedFile);
     const preview = document.querySelector("#form-photo-area");
-    const fileGroup = document.querySelector(".modal__form-file-group");
-
+    
     const img = document.createElement("img");
     img.className = "form__preview";
     img.id = "form-preview";
@@ -67,11 +66,12 @@ export class WorkForm {
     img.alt = "preview";
 
     preview.appendChild(img);
-    fileGroup.style.display = "none";
+    document.querySelector(".modal__form-file-group").classList.add('d-none');
   }
 
   removePreviewUploadFile() {
-    document.querySelector(".modal__form-file-group").style.display = "flex";
+    document.querySelector(".modal__form-file-group").classList.remove('d-none');
+    
     const preview = document.querySelector("#form-preview");
     if (preview) {
       preview.remove();

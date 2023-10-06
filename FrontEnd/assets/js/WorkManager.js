@@ -24,7 +24,7 @@ export class WorkManager {
     if (isAdd) {
       this.works = await http.getWorks();
       this.display();
-      serviceManager.getFilterButtons().display(this.works);
+      serviceManager.getFilterButtons().display();
       form.reset();
       workForm.removePreviewUploadFile();
       workForm.selectedFile = null;
@@ -55,7 +55,7 @@ export class WorkManager {
       const newWorks = this.works.filter((work) => work.id !== id);
       this.works = newWorks;
       this.display(this.works);
-      serviceManager.getFilterButtons().display(this.works);
+      serviceManager.getFilterButtons().display();
 
       const cardDeleted = document.querySelector(
         `img[data-id="${id}"]`

@@ -2,7 +2,6 @@ import { ModalFactory } from "./ModalFactory.js";
 import serviceManager from "./ServiceManager.js";
 
 export class ModalManager {
-  constructor() {}
 
   show(e) {
     e.preventDefault();
