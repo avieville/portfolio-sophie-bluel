@@ -112,14 +112,14 @@
     justify-content: center;
 }
 
-.modal__form-file-group{
+.modal__form-file-group {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px
 }
 
-.d-none{
+.d-none {
     display: none;
 }
 
@@ -149,9 +149,25 @@
     font-family: 'Work sans';
 }
 
-.modal__form p.error{
+.modal__form p.error {
     font-size: 16px;
     color: #b1663c;
+}
+
+.form-error-message {
+    margin-top: 5px;
+    color: #b1663c;
+    display: block;
+    visibility: hidden;
+}
+
+.form-error-border {
+    border: 1px solid #b1663c;
+}
+
+.form-error-visible {
+    visibility: visible;
+
 }
 
 .modal__form-photo-area {
@@ -171,7 +187,8 @@
 
 }
 
-.modal__form-group input, .modal__form-group select {
+.modal__form-group input,
+.modal__form-group select {
     height: 51px;
     border: none;
     box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.09);
@@ -183,26 +200,17 @@
 
 
 
-.form-group-title{
-margin-bottom: 21px;
+.form-group-title {
+    margin-bottom: 21px;
 }
 
-.form-group-category{
+.form-group-category {
     padding-bottom: 47px;
     border-bottom: 1px solid rgba(179, 179, 179, 1);
 }
 
-.form__preview{
+.form__preview {
     height: 100%;
     max-width: 80%;
-    
-}
 
-
-
-.formMessageDialog{
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }

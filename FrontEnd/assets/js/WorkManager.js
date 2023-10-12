@@ -5,38 +5,20 @@ export class WorkManager {
     this.works = [];
   }
 
-  async add() {
-    const workForm = serviceManager.getWorkForm();
+  async add(formData) {
     const http = serviceManager.getHttp();
 
-    const form = document.querySelector("#modal-form");
     const token = localStorage.getItem("token");
-    const select = document.getElementById("modal-form-category");
-    const messageDialog = document.querySelector("#formMessageDialog");
-
-    const formData = new FormData();
-    formData.append("image", workForm.selectedFile);
-    formData.append("title", document.getElementById("modal-form-title").value);
-    formData.append("category", select.options[select.selectedIndex].value);
 
     const isAdd = await http.createWork(formData, token);
 
     if (isAdd) {
-      this.works = await http.getWorks();
+      this.works = await http.fetchWorks();
       this.display();
       serviceManager.getFilterButtons().display();
-      form.reset();
-      workForm.removePreviewUploadFile();
-      workForm.selectedFile = null;
-
-      const button = document.querySelector("#modalButton");
-      button.disabled = true;
-      button.classList.add("modal__button--inactive");
-
-      messageDialog.innerText = "Projet ajouté";
-      document.querySelector(".modal__form p").classList.remove("error");
+      return true;
     } else {
-      messageDialog.innerText = "Un problème s'est produit lors de l'ajout";
+      return false;
     }
   }
 
@@ -71,7 +53,7 @@ export class WorkManager {
   }
 
   async getWorks() {
-    this.works = await serviceManager.http.getWorks();
+    this.works = await serviceManager.http.fetchWorks();
   }
 
   getCategories() {

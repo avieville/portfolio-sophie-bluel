@@ -31,7 +31,7 @@ export class Http {
     }
   }
 
-  async getWorks() {
+  async fetchWorks() {
     try {
       const response = await fetch(`${this.API_URL}/works`);
       if (!response.ok) {

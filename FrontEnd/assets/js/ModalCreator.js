@@ -1,21 +1,19 @@
 import serviceManager from "./ServiceManager.js";
 
-export class ModalFactory {
+export class ModalCreator {
   constructor(modalType) {
     this.modalType = modalType;
+
     this.modal = this.createEmptyModal();
+
     this.modalContent = this.modal.firstElementChild;
 
-    if (modalType === "add") {
-      this.addArrowLeftIcon();
-    }
+    modalType === "add" && this.addArrowLeftIcon();
     this.addCloseIcon();
     this.addTitle();
     this.addMainContent();
     this.addFormMessageDialog();
     this.addButton();
-
-    return this.modal;
   }
 
   createEmptyModal() {
@@ -115,12 +113,14 @@ export class ModalFactory {
               <img class="modal__form-landscape" src="./assets/icons/landscape.png" alt="landscape">
               <label for="file" class="modal__form-file-input-label">+ Ajouter photo</label>
               <input id="file" class="modal__form-file-input" type="file" name="modal__form-file-input">
-              <p>jpg, png : 4mo max</p>
+              <span id="form-file-requirement-msg">jpg, png : 4mo max</span>
             </div>
+            
           </div>
           <div class="modal__form-group form-group-title">
             <label for="modal-form-title">Titre</label>
             <input id="modal-form-title" type="text" name="title">
+            <span class="form-error-message" id="modal-form-title-error">Ce champ doit contenir au minimum 3 caractères.</span>
           </div>
           <div class="modal__form-group form-group-category">
             <label for="modal-form-category">Catégorie</label>
@@ -130,14 +130,29 @@ export class ModalFactory {
               <option value="2">Appartements</option>
               <option value="3">Hotel & restaurants</option>
             </select>
+            <span class="form-error-message" id="modal-form-select-error">Ce champ est invalide. Veuillez choisir une catégorie.</span>
           </div>
         </form>
       `;
 
       mainContent.innerHTML = template;
-      const form = mainContent.querySelector("form");
-      form.addEventListener("input", (e) =>
-        serviceManager.getWorkForm().checkValidityFormAndEnableButton(e)
+
+      const workForm = serviceManager.getWorkForm();
+      workForm.initialize();
+
+      const modalFormFile = mainContent.querySelector("#file");
+      modalFormFile.addEventListener("change", (e) =>
+        workForm.checkFileField(e)
+      );
+
+      const modalFormTitle = mainContent.querySelector("#modal-form-title");
+      modalFormTitle.addEventListener("input", () =>
+        workForm.checkTitleField()
+      );
+
+      const modalFormSelect = mainContent.querySelector("#modal-form-category");
+      modalFormSelect.addEventListener("input", () =>
+        workForm.checkSelectField()
       );
     }
 
@@ -171,10 +186,14 @@ export class ModalFactory {
     const callback =
       this.modalType === "delete"
         ? (e) => serviceManager.getModalManager().show(e, this.works)
-        : () => serviceManager.getWorkManager().add();
+        : () => serviceManager.getWorkForm().submitForm();
     button.addEventListener("click", callback);
 
     this.modalContent.appendChild(button);
     return this;
+  }
+
+  static create(modalType) {
+    return new ModalCreator(modalType).modal;
   }
 }

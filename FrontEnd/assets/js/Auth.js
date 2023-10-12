@@ -40,7 +40,7 @@ export class Auth {
     newAuthLink.innerText = token ? "logout" : "login";
     token && newAuthLink.addEventListener("click", cb);
   }
-  
+
   updateEditLink() {
     const editLink = document.querySelector("#editLink");
     const token = localStorage.getItem("token");
@@ -81,6 +81,7 @@ export class Auth {
       const message = document.createElement("p");
       message.id = "login-form-message";
       message.innerText = "Erreur dans l’identifiant ou le mot de passe";
+      const loginForm = document.getElementById("login-form");
       loginForm.appendChild(message);
     }
   }
