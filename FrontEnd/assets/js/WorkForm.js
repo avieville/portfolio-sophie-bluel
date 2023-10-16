@@ -139,10 +139,7 @@ export class WorkForm {
       const form = document.querySelector("#modal-form");
       form.reset();
       this.removePreviewUploadFile();
-      this.selectedFile = null;
-      this.isValidInputFileField = false;
-      this.isValidInputTitleField = false;
-      this.isValidInputSelectField = false;
+      this.initialize();
 
       const button = document.querySelector("#modalButton");
       button.disabled = true;
