@@ -1,6 +1,10 @@
 import serviceManager from "./ServiceManager.js";
 
 export class Auth {
+  constructor() {
+    this.refCbLogoutEventListener = (e) => this.logout(e);
+  }
+
   async login(e) {
     e.preventDefault();
 
@@ -16,8 +20,8 @@ export class Auth {
     }
   }
 
-  logout(event) {
-    event.preventDefault();
+  logout(e) {
+    e.preventDefault();
     localStorage.removeItem("token");
     this.updateAuthLink();
     this.updateEditLink();
@@ -26,19 +30,15 @@ export class Auth {
   updateAuthLink() {
     const authLink = document.getElementById("auth-link");
     const token = localStorage.getItem("token");
-    const cb = (e) => this.logout(e);
 
-    /**
-     * the removeListener did not work (nothing seen in the debugger).
-     * so I used replaceChild to remove eventListener
-     * from the element.
-     */
-    const newAuthLink = authLink.cloneNode();
-    authLink.parentNode.replaceChild(newAuthLink, authLink);
+    authLink.href = token ? "#" : "./login.html";
+    authLink.innerText = token ? "logout" : "login";
 
-    newAuthLink.href = token ? "#" : "./login.html";
-    newAuthLink.innerText = token ? "logout" : "login";
-    token && newAuthLink.addEventListener("click", cb);
+    if (token) {
+      authLink.addEventListener("click", this.refCbLogoutEventListener);
+    } else {
+      authLink.removeEventListener("click", this.refCbLogoutEventListener);
+    }
   }
 
   updateEditLink() {
