@@ -19,15 +19,15 @@ export class Http {
       });
 
       if (!response.ok) {
-        return false;
+        return null;
       }
 
-      const data = await response.json();
-      window.localStorage.setItem("token", data.token);
-      return true;
+      const data = await response.json(); 
+      return data.token;
+
     } catch (error) {
       console.error(error.message);
-      return false;
+      return null;
     }
   }
 

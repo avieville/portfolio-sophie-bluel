@@ -11,9 +11,10 @@ export class Auth {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const isLoggedIn = await serviceManager.getHttp().login(email, password);
+    const token = await serviceManager.getHttp().login(email, password);
 
-    if (isLoggedIn) {
+    if (token) {
+      window.localStorage.setItem("token", token);
       window.location.assign("index.html");
     } else {
       this.showInvalidCredentialMessage();
